@@ -10,6 +10,6 @@ class Process {
 	int ioTime;
 	int numBurst;
 public:
-	Process(std::string i, int at, int bt, int it, int n);
+	Process(std::string i, int at, int bt, int n, int it);
 	void pprint();
 };

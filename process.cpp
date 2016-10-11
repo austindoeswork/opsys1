@@ -1,7 +1,7 @@
 // process.cpp
 #include "process.h"
 
-Process::Process(std::string i, int at, int bt, int it, int n) {
+Process::Process(std::string i, int at, int bt, int n, int it) {
 	id = i;
 	arrivalTime = at;
 	burstTime = bt;
