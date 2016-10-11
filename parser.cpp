@@ -3,11 +3,11 @@
 
 #define MAXSTRING 2048 //max length of a string
 
-std::vector<struct Process *> Parse(char const * filename);
+std::vector<class Process *> Parse(char const * filename);
 
 //PRETTYPRINT
 void PrintFile(char const * filename) {
-	std::vector<struct Process *> pv = Parse(filename);
+	std::vector<class Process *> pv = Parse(filename);
 	int i = 0;
 	for (; i < pv.size(); i++){
 		printf("====================\n");
@@ -30,9 +30,9 @@ int is_empty(const char *s) {
 }
 
 // PARSE
-std::vector<struct Process *> Parse(char const *filename){
+std::vector<class Process *> Parse(char const *filename){
 
-	std::vector<struct Process *> procVec; //vector of procs
+	std::vector<class Process *> procVec; //vector of procs
 
     FILE *file_p; //file pointer
     file_p = fopen(filename, "r"); //open the file

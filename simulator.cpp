@@ -1,7 +1,7 @@
 // simulator.cpp
 #include "simulator.h"
 
-Simulator::Simulator(const std::vector<struct Process *> vp) {
+Simulator::Simulator(const std::vector<class Process *> vp) {
 	procs = vp;
 }
 

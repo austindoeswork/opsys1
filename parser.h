@@ -7,4 +7,4 @@
 #include "process.h"
 
 void PrintFile(char const * filename);
-std::vector<struct Process *> Parse(char const * filename);
+std::vector<class Process *> Parse(char const * filename);
