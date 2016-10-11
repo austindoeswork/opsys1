@@ -1,23 +1,24 @@
 // parser.cpp
 #include "process.h"
 #include "parser.h"
-#include <string.h> //for c string functions
-#include <vector> //for vector stuff
 
 #define MAXSTRING 2048 //max length of a string
 
-std::vector<struct Process *> parseFile(char const * filename);
+std::vector<struct Process *> Parse(char const * filename);
 
-void Parse(char const * filename) {
-	std::vector<struct Process *> pv = parseFile(filename);
+//PRETTYPRINT
+void PrintFile(char const * filename) {
+	std::vector<struct Process *> pv = Parse(filename);
 	int i = 0;
 	for (; i < pv.size(); i++){
+		printf("====================\n");
 		pv[i]->pprint();
 	}
+	printf("====================\n");
 }
 
-// PARSE HELPERS
 
+// PARSE HELPERS
 int is_empty(const char *s) {
 	while (*s != '\0') {
   		if (*s == '#') //TODO better comment checking
@@ -29,10 +30,10 @@ int is_empty(const char *s) {
 	return 1;
 }
 
-std::vector<struct Process *> parseFile(char const *filename){
+// PARSE
+std::vector<struct Process *> Parse(char const *filename){
 
-	std::vector<struct Process *> procVec;
-
+	std::vector<struct Process *> procVec; //vector of procs
 
     FILE *file_p; //file pointer
     file_p = fopen(filename, "r"); //open the file
@@ -60,10 +61,9 @@ std::vector<struct Process *> parseFile(char const *filename){
         	tokenVec.push_back(copy);
         }
 
-	    if (tokenVec.size() == 5){
+	    if (tokenVec.size() == 5){ //if right size, add to the vector
 			Process * proc = new Process(tokenVec[0],atoi(tokenVec[1]),atoi(tokenVec[2]),atoi(tokenVec[3]),atoi(tokenVec[4]));
 			procVec.push_back(proc);
-			// proc.pprint();
 	    }
 	    
 	    int i = 0;
