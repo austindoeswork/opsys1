@@ -51,7 +51,30 @@ class CPUSim {
 	//append (add a burst to the cpusim)
 };
 
-class Memory { //holds the processes
-	// map [ID] READY,RUNNING,BLOCKED 0,1,2
-	// map [ID] atime,iotime,... 0,1,2,3
+class ReadyQueue {
+protected:
+	std::vector<struct Process *> procs;
+public:
+	virtual struct Process * getNext(); //will return NULL if no next
 };
+
+class FIFOQueue: public ReadyQueue {
+public:
+	struct Process * getNext(); //will return NULL if no next
+
+};
+
+class SJFQueue: public ReadyQueue {
+public:
+	struct Process * getNext(); //will return NULL if no next
+
+};
+
+class RRQueue: public ReadyQueue {
+public:
+	struct Process * getNext(); //will return NULL if no next
+};
+
+
+
+
