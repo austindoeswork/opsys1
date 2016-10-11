@@ -61,23 +61,27 @@ protected:
 	std::vector<class Process *> procs;
 public:
 	virtual class Process * getNext(); //will return NULL if no next
+	virtual class Process * peek(); //will return NULL if no next
 };
 
 class FIFOQueue: public ReadyQueue {
 public:
 	class Process * getNext(); //will return NULL if no next
+	class Process * peek(); //will return NULL if no next
 
 };
 
 class SJFQueue: public ReadyQueue {
 public:
 	class Process * getNext(); //will return NULL if no next
+	class Process * peek(); //will return NULL if no next
 
 };
 
 class RRQueue: public ReadyQueue {
 public:
 	class Process * getNext(); //will return NULL if no next
+	class Process * peek(); //will return NULL if no next
 };
 
 
