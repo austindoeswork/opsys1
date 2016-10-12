@@ -42,5 +42,26 @@ int main(int argc, char const *argv[])
 	sim.run();
 
 
+	CPUSim csim(0);
+	struct CPUBurst b;
+	b.id = "fuck";
+	b.time = 5;
+	csim.append(b);
+	
+	CPUBurst * cburst = csim.cycle();
+	for (; !cburst; cburst = csim.cycle()) {
+			printf("%s\n", "not done yet.");
+	}
+	if (cburst) {
+			printf("%s\n", cburst->id.c_str());
+			printf("%d\n", cburst->time);
+	}
+		
+
+	Memory mem(vp);
+	mem.pprint();
+	mem.decrementBurst("A");
+	printf("%d\n", mem.remainingBursts("A"));
+
 }
 
