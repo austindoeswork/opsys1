@@ -27,10 +27,22 @@
 				done(p)
  */
 
+struct IDTime {
+	std::string id;
+	int time;
+};
+
+// ============================================================================
+// SIM ========================================================================
+// ============================================================================
 
 class Simulator {
 	// int cpuclock //count cycles
 	std::vector<class Process *> procs; //all procs in here?
+	std::map<std::string, class Process *> procMap;
+
+
+
 	class ReadyQueue *rq;
 	// IOSim io_s;
 	// CPUSim cpu_s;
@@ -44,33 +56,48 @@ public:
 	//reset (reset clock and other stuff)
 };
 
+// ============================================================================
+// IO =========================================================================
+// ============================================================================
 
 class IOSim {
+	std::vector<class Process *> procs; //all procs in here?
 	//vector of io bursts
 // public:
 	//append (add a burst to the iosim)
 	//cycle (subtract one from each burst) return vector of completed bursts
 };
 
-struct CPUBurst {
-	std::string id;
-	int time;
-};
+// ============================================================================
+// CPU ========================================================================
+// ============================================================================
+
 
 class CPUSim { //TODO how to deal with load/unload?
-	// int status? 0,1,2,3 (running, free, loading, unloading)?
-	// int time_left; need this?
-	int t_slice;
-	int time_elapsed;
-	struct CPUBurst current_burst;
+	// int status // 0,1,2,3 (running, free, loading, unloading)?
+	int t_slice; //allowed time slice
+	int load_time; //TODO
+	int unload_time; //TODO
+
+	int time_elapsed; //increases with each cycle
+	std::string current_id;
+	int current_burst_time; //decreases with each cycle
 public:
-	CPUSim(int ts); //0 or less for no slicing
-	void append(struct CPUBurst b); // (add a burst to the cpusim)
-	CPUBurst * cycle(); //(subtract one from time, or load/unload) return burst (done), or NULL for not done
+	CPUSim(int ts, int lt, int ut); //ts = 0 or less for no slicing
+	int append(std::string id, int time); // (add a burst to the cpusim) return success
+	IDTime * cycle(); //(subtract one from time, or load/unload) return burst (done), or NULL for not done
+	int getStatus();
 };
 
+// ============================================================================
+// MEMORY =====================================================================
+// ============================================================================
+
 struct ProcMem {
+	int originalBurstTime;
 	int remainingBursts;
+	int timeRemaining;
+
 	//int wait time, ...
 };
 
@@ -79,9 +106,15 @@ class Memory {
 public:
 	Memory(const std::vector<class Process *>); //load vector into map by ID
 	int remainingBursts(std::string); //num bursts left
-	void decrementBurst(std::string); //decrease num bursts by one
+	int decrementBurst(std::string); //decrease num bursts by one
+	int getTimeRemaining(std::string); //get remaining time on current burst
+	void setTimeRemaining(std::string, int); //set remaining time on current burst
 	void pprint();
 };
+
+// ============================================================================
+// QUEUE ======================================================================
+// ============================================================================
 
 class ReadyQueue {
 // protected:
@@ -90,6 +123,7 @@ public:
 	virtual void append(class Process * proc); //add a proc to queue
 	virtual class Process * getNext(); //will return NULL if no next
 	virtual class Process * peek(); //will return NULL if no next
+	virtual std::string contents(); //return string "[ Q A B C ... ]"
 };
 
 class FIFOQueue: public ReadyQueue {
@@ -98,19 +132,21 @@ public:
 	void append(class Process * proc);
 	class Process * getNext(); //will return NULL if no next
 	class Process * peek(); //will return NULL if no next
+	std::string contents(); //return string "[ Q A B C ... ]"
 };
 
 class SJFQueue: public ReadyQueue {
 public:
 	class Process * getNext(); //will return NULL if no next
 	class Process * peek(); //will return NULL if no next
-
+	std::string contents(); //return string "[ Q A B C ... ]"
 };
 
 class RRQueue: public ReadyQueue {
 public:
 	class Process * getNext(); //will return NULL if no next
 	class Process * peek(); //will return NULL if no next
+	std::string contents(); //return string "[ Q A B C ... ]"
 };
 
 
