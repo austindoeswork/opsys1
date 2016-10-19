@@ -23,7 +23,19 @@
 int m = 1; //number of processors (not needed for this project)
 int t_slice = 84; //rr slice time (milliseconds)
 int t_cs = 8; //context switch time (milliseconds)
-
+float aveCpuTime(std::vector<class Process*> input){
+	float numb = 0;
+	float totb = 0;
+	float btim = 0;
+	float tott = 0;
+	for(auto it = input.begin(); it != input.end(); it++){
+		numb = (*it) -> num_burst();
+		btim = (*it) -> burst_t();
+		tott += btim * numb;
+		totb += numb;
+	}
+	return tott/totb;
+}
 int main(int argc, char const *argv[])
 {
 	if (argc < 2) {
@@ -67,9 +79,10 @@ int main(int argc, char const *argv[])
 
 	SJFQueue rq2;
 	std::cout << rq2.printQueue();
-	rq2.append(vp[1]);
+	rq2.append(vp[2]);
 	// std::cout << rq2.printQueue();
 	rq2.append(vp[0]);
-	rq2.append(vp[2]);
+	rq2.append(vp[1]);
 	std::cout << rq2.printQueue();
+	printf("\nAverage time is %f\n", aveCpuTime(vp));
 }
