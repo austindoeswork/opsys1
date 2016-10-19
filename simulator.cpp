@@ -125,7 +125,7 @@ int Memory::getTimeRemaining(std::string id) { //get remaining time on current b
 // ============================================================================
 
 void ReadyQueue::append(class Process * proc){
-	procs.insert(procs.begin(), proc);
+	procs.push_back(proc);
 }
 
 Process* ReadyQueue::getNext(){
@@ -140,20 +140,23 @@ Process* ReadyQueue::peek(){
 	return procs.back();
 }
 
+
 void FIFOQueue::append(class Process * proc){
-	procs.insert(procs.begin(), proc);
+	procs.push_back(proc);
 }
 
 Process* FIFOQueue::getNext(){
 	if(procs.empty()){return NULL;}
-	return (Process*) procs.back();
+	auto nxt = procs.front();
+	procs.erase(procs.begin());
+	return nxt;
 }
 
 Process* FIFOQueue::peek(){
 	if(procs.empty()){
 		return NULL;
 	}		
-	return procs.back();
+	return procs.front();
 }
 
 void SJFQueue::append(class Process * proc){
@@ -177,20 +180,3 @@ Process * SJFQueue::peek(){
 		return procs.back();
 	}
 }
-void RRQueue::append(Process* proc){
-	procs.push_back(proc);
-}
-Process * RRQueue::getNext(){
-	Process* retval;
-	retval = procs[0];
-	procs.erase(procs.begin());
-	return retval;
-}
-Process * RRQueue::peek(){
-	if(procs.empty()){
-		return NULL;
-	}
-	else{
-		return procs[0];
-	}
-}	

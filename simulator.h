@@ -140,11 +140,4 @@ public:
 
 };
 
-class RRQueue: public ReadyQueue {
-	std::vector<class Process *> procs;
-public:
-	void append(class Process * proc);
-	class Process * getNext(); //will return NULL if no next
-	class Process * peek(); //will return NULL if no next
-};
 
