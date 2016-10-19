@@ -4,7 +4,7 @@
 #include <vector>
 #include <queue>
 #include <map>
-
+#include <list>
 #include "process.h"
 //every process is identified by it's ID, not its object
 //do not overwrite the original vector of procs
@@ -116,7 +116,7 @@ public:
 // ============================================================================
 
 class ReadyQueue {
-	std::vector<class Process *> procs;
+	std::list<class Process *> procs;
 public:
 	virtual void append(class Process * proc); //add a proc to queue
 	virtual std::string printQueue();
@@ -125,7 +125,7 @@ public:
 };
 
 class FIFOQueue: public ReadyQueue {
-	std::vector<class Process *> procs;
+	std::list<class Process *> procs;
 public:
 	void append(class Process * proc);
 	virtual std::string printQueue();
@@ -134,7 +134,7 @@ public:
 };
 
 class SJFQueue: public ReadyQueue {
-	std::vector<class Process *> procs;
+	std::list<class Process *> procs;
 public:
 	void append(class Process * proc);
 	virtual std::string printQueue();

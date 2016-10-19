@@ -130,7 +130,9 @@ void ReadyQueue::append(class Process * proc){
 
 Process* ReadyQueue::getNext(){
 	if(procs.empty()){return NULL;}
-	return (Process*) procs.pop_back();
+	auto nxt = procs.back();
+	procs.pop_back();
+	return nxt;
 }
 
 Process* ReadyQueue::peek(){
@@ -143,7 +145,7 @@ Process* ReadyQueue::peek(){
 std::string ReadyQueue::printQueue(){
 	std::string queue = "[Q";
 	int i = 0;
-	for (std::vector<Process *>::iterator it = procs.begin(); it != procs.end(); it++) {
+	for (std::list<Process *>::iterator it = procs.begin(); it != procs.end(); it++) {
     	queue += " " + (*it)->ID();
 		i ++;
 	}
@@ -175,7 +177,7 @@ Process* FIFOQueue::peek(){
 std::string FIFOQueue::printQueue(){
 	std::string queue = "[Q";
 	int i = 0;
-	for (std::vector<Process *>::iterator it = procs.begin(); it != procs.end(); it++) {
+	for (auto it = procs.begin(); it != procs.end(); it++) {
     	queue += " " + (*it)->ID();
 		i ++;
 	}
@@ -191,17 +193,21 @@ void SJFQueue::append(class Process * proc){
 		procs.push_back(proc);
 		return;
 	}
+	
 	for (auto it = procs.begin(); it != procs.end(); it++){
-		if ((((*it) -> burst_t()) > proc -> burst_t()) && procs.size() != 0){
+		if ((((*it) -> burst_t()) > proc -> burst_t())){
 			procs.insert(it, proc);
 			return;
 		}
 	}
+	procs.push_back(proc);
 }
 
 Process * SJFQueue::getNext(){
 	if(procs.empty()){return NULL;}
-	return (Process*) procs.pop_back();
+	auto nxt = procs.back();
+	procs.pop_back();
+	return nxt;
 }
 Process * SJFQueue::peek(){
 	if(procs.empty()){
@@ -215,7 +221,7 @@ Process * SJFQueue::peek(){
 std::string SJFQueue::printQueue(){
 	std::string queue = "[Q";
 	int i = 0;
-	for(std::vector<Process *>::reverse_iterator it = procs.rbegin(); it != procs.rend(); ++it) {
+	for(std::list<Process *>::reverse_iterator it = procs.rbegin(); it != procs.rend(); ++it) {
     	queue += " " + (*it)->ID();
 		i++;
 	}

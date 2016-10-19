@@ -65,9 +65,16 @@ int main(int argc, char const *argv[])
 	v = isim.cycle();
 	printf("%lu\n", v.size());
 
+	SJFQueue rq2;
+	std::cout << rq2.printQueue();
+	rq2.append(vp[1]);
+	std::cout << rq2.printQueue();
+	rq2.append(vp[0]);
+	std::cout << rq2.printQueue();
 	SJFQueue rq;
 	std::cout << rq.printQueue();
 	rq.append(vp[0]);
 	std::cout << rq.printQueue();
 	rq.append(vp[1]);
+	std::cout << rq.printQueue();
 }
