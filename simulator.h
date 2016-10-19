@@ -6,7 +6,7 @@
 #include <map>
 
 #include "process.h"
-//every process is identified by it's ID, not it's object
+//every process is identified by it's ID, not its object
 //do not overwrite the original vector of procs
 //wait on timing? or do we need to think about it in init implementation
 
@@ -61,11 +61,10 @@ public:
 // ============================================================================
 
 class IOSim {
-	std::vector<class Process *> procs; //all procs in here?
-	//vector of io bursts
+// 	std::vector<struct IDTime> procs;
 // public:
-	//append (add a burst to the iosim)
-	//cycle (subtract one from each burst) return vector of completed bursts
+// 	int append(std::string id, int time); //return success
+// 	std::vector<struct std::string> cycle(); //return vector of finished procs
 };
 
 // ============================================================================
@@ -117,38 +116,35 @@ public:
 // ============================================================================
 
 class ReadyQueue {
-// protected:
-	// std::vector<class Process *> procs;
+	std::vector<class Process *> procs;
 public:
 	virtual void append(class Process * proc); //add a proc to queue
 	virtual class Process * getNext(); //will return NULL if no next
 	virtual class Process * peek(); //will return NULL if no next
-	virtual std::string contents(); //return string "[ Q A B C ... ]"
 };
 
 class FIFOQueue: public ReadyQueue {
-	std::queue<class Process *> fifo_q;
+	std::vector<class Process *> procs;
 public:
 	void append(class Process * proc);
 	class Process * getNext(); //will return NULL if no next
 	class Process * peek(); //will return NULL if no next
-	std::string contents(); //return string "[ Q A B C ... ]"
 };
 
 class SJFQueue: public ReadyQueue {
+	std::vector<class Process *> procs;
 public:
+	void append(class Process * proc);
 	class Process * getNext(); //will return NULL if no next
 	class Process * peek(); //will return NULL if no next
-	std::string contents(); //return string "[ Q A B C ... ]"
+
 };
 
 class RRQueue: public ReadyQueue {
+	std::vector<class Process *> procs;
 public:
+	void append(class Process * proc);
 	class Process * getNext(); //will return NULL if no next
 	class Process * peek(); //will return NULL if no next
-	std::string contents(); //return string "[ Q A B C ... ]"
 };
-
-
-
 
