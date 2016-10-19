@@ -44,6 +44,7 @@ class Simulator {
 
 
 	class ReadyQueue *rq;
+	int doneCount;
 	// IOSim io_s;
 	// CPUSim cpu_s;
 
@@ -52,6 +53,7 @@ class Simulator {
 public:
 	Simulator(const std::vector<class Process *>); //conclassor takes in a vector
 	void pprint();
+	void simulate(ReadyQueue * rq); //run sim
 	//simulate(context_switch_time, method, ?) //execute simulation
 	//reset (reset clock and other stuff)
 };
@@ -65,6 +67,7 @@ class IOSim {
 public:
 	int append(std::string id, int time); //return success
 	std::vector<std::string> cycle(); //return vector of finished procs
+	void pprint();
 };
 
 // ============================================================================
@@ -73,7 +76,7 @@ public:
 
 
 class CPUSim { //TODO how to deal with load/unload?
-	// int status // 0,1,2,3 (running, free, loading, unloading)?
+	int status; // 0,1,2,3 (running, free, loading, unloading)?
 	int t_slice; //allowed time slice
 	int load_time; //TODO
 	int unload_time; //TODO
@@ -85,7 +88,7 @@ public:
 	CPUSim(int ts, int lt, int ut); //ts = 0 or less for no slicing
 	int append(std::string id, int time); // (add a burst to the cpusim) return success
 	IDTime * cycle(); //(subtract one from time, or load/unload) return burst (done), or NULL for not done
-	int getStatus();
+	int getStatus(); //returns current status
 };
 
 // ============================================================================
