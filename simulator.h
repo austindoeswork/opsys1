@@ -23,7 +23,7 @@
 		if io finishes a proc
 			if proc has more bursts
 				ready(p)
-			else 
+			else
 				done(p)
  */
 
@@ -119,6 +119,7 @@ class ReadyQueue {
 	std::vector<class Process *> procs;
 public:
 	virtual void append(class Process * proc); //add a proc to queue
+	virtual std::string printQueue();
 	virtual class Process * getNext(); //will return NULL if no next
 	virtual class Process * peek(); //will return NULL if no next
 };
@@ -127,6 +128,7 @@ class FIFOQueue: public ReadyQueue {
 	std::vector<class Process *> procs;
 public:
 	void append(class Process * proc);
+	virtual std::string printQueue();
 	class Process * getNext(); //will return NULL if no next
 	class Process * peek(); //will return NULL if no next
 };
@@ -135,9 +137,8 @@ class SJFQueue: public ReadyQueue {
 	std::vector<class Process *> procs;
 public:
 	void append(class Process * proc);
+	virtual std::string printQueue();
 	class Process * getNext(); //will return NULL if no next
 	class Process * peek(); //will return NULL if no next
 
 };
-
-

@@ -9,7 +9,7 @@ Simulator::Simulator(const std::vector<class Process *> vp) {
 	procs = vp;
 	int i = 0;
 	for (; i < vp.size(); i++){ //create map
-		procMap[vp[i]->ID()] = vp[i]; 
+		procMap[vp[i]->ID()] = vp[i];
 	}
 }
 
@@ -93,7 +93,7 @@ Memory::Memory(const std::vector<class Process *> vp) {
 		ProcMem *pm = new ProcMem();
 		pm->remainingBursts = vp[i]->num_burst();
 		pm->timeRemaining = vp[i]->burst_t();
-		procMap[vp[i]->ID()] = pm; 
+		procMap[vp[i]->ID()] = pm;
 	}
 }
 
@@ -136,10 +136,23 @@ Process* ReadyQueue::getNext(){
 Process* ReadyQueue::peek(){
 	if(procs.empty()){
 		return NULL;
-	}		
+	}
 	return procs.back();
 }
 
+std::string ReadyQueue::printQueue(){
+	std::string queue = "[Q";
+	int i = 0;
+	for (std::vector<Process *>::iterator it = procs.begin(); it != procs.end(); it++) {
+    	queue += " " + (*it)->ID();
+		i ++;
+	}
+	if (i == 0) {
+		queue += " empty";
+	}
+	queue += "]\n";
+	return queue;
+}
 
 void FIFOQueue::append(class Process * proc){
 	procs.push_back(proc);
@@ -155,13 +168,31 @@ Process* FIFOQueue::getNext(){
 Process* FIFOQueue::peek(){
 	if(procs.empty()){
 		return NULL;
-	}		
+	}
 	return procs.front();
 }
 
+std::string FIFOQueue::printQueue(){
+	std::string queue = "[Q";
+	int i = 0;
+	for (std::vector<Process *>::iterator it = procs.begin(); it != procs.end(); it++) {
+    	queue += " " + (*it)->ID();
+		i ++;
+	}
+	if (i == 0) {
+		queue += " empty";
+	}
+	queue += "]\n";
+	return queue;
+}
+
 void SJFQueue::append(class Process * proc){
-	for(auto it = procs.begin(); it != procs.end(); it++){
-		if(((*it) -> burst_t()) > proc -> burst_t()){
+	if (procs.size() == 0) {
+		procs.push_back(proc);
+		return;
+	}
+	for (auto it = procs.begin(); it != procs.end(); it++){
+		if ((((*it) -> burst_t()) > proc -> burst_t()) && procs.size() != 0){
 			procs.insert(it, proc);
 			return;
 		}
@@ -179,4 +210,18 @@ Process * SJFQueue::peek(){
 	else{
 		return procs.back();
 	}
+}
+
+std::string SJFQueue::printQueue(){
+	std::string queue = "[Q";
+	int i = 0;
+	for(std::vector<Process *>::reverse_iterator it = procs.rbegin(); it != procs.rend(); ++it) {
+    	queue += " " + (*it)->ID();
+		i++;
+	}
+	if (i == 0) {
+		queue += " empty";
+	}
+	queue += "]\n";
+	return queue;
 }
