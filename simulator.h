@@ -61,10 +61,10 @@ public:
 // ============================================================================
 
 class IOSim {
-// 	std::vector<struct IDTime> procs;
-// public:
-// 	int append(std::string id, int time); //return success
-// 	std::vector<struct std::string> cycle(); //return vector of finished procs
+	std::vector<struct IDTime> procs;
+public:
+	int append(std::string id, int time); //return success
+	std::vector<std::string> cycle(); //return vector of finished procs
 };
 
 // ============================================================================

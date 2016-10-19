@@ -36,23 +36,33 @@ int main(int argc, char const *argv[])
 	Simulator sim(vp);
 	sim.pprint();
 
-	CPUSim csim(10,5,5);
-	csim.append("A", 168);
+	// CPUSim csim(10,5,5);
+	// csim.append("A", 168);
 	
-	IDTime * cburst = csim.cycle();
-	for (; !cburst; cburst = csim.cycle()) {
-			printf("%s\n", "not done yet.");
-	}
-	if (cburst) {
-			printf("%s\n", cburst->id.c_str());
-			printf("%d\n", cburst->time);
-	}
+	// IDTime * cburst = csim.cycle();
+	// for (; !cburst; cburst = csim.cycle()) {
+	// 		printf("%s\n", "not done yet.");
+	// }
+	// if (cburst) {
+	// 		printf("%s\n", cburst->id.c_str());
+	// 		printf("%d\n", cburst->time);
+	// }
 		
 
-	Memory mem(vp);
-	mem.pprint();
-	mem.decrementBurst("A");
-	printf("%d\n", mem.decrementBurst("A"));
+	// Memory mem(vp);
+	// mem.pprint();
+	// mem.decrementBurst("A");
+	// printf("%d\n", mem.decrementBurst("A"));
 
+	IOSim isim;
+	isim.append("A", 1);
+	isim.append("B", 2);
+	isim.append("C", 2);
+	auto v = isim.cycle();
+	printf("%lu\n", v.size());
+	v = isim.cycle();
+	printf("%lu\n", v.size());
+	v = isim.cycle();
+	printf("%lu\n", v.size());
 }
 

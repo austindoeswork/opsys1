@@ -26,7 +26,26 @@ void Simulator::pprint() {
 // IO =========================================================================
 // ============================================================================
 
-// IOSim::IOSim(  )
+int IOSim::append(std::string i, int t) {
+	IDTime it;
+	it.id = i;
+	it.time = t;
+	procs.push_back(it);
+	return 0;
+}
+
+std::vector<std::string> IOSim::cycle() {
+	std::vector<std::string> finished;
+	int i = 0;
+	for (; i < procs.size(); i++) {
+		procs[i].time--;
+		if (procs[i].time == 0) {
+			finished.push_back(procs[i].id);
+		}
+	}
+	return finished;
+}
+
 
 // ============================================================================
 // CPU ========================================================================
