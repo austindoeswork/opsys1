@@ -130,7 +130,7 @@ void ReadyQueue::append(class Process * proc){
 
 Process* ReadyQueue::getNext(){
 	if(procs.empty()){return NULL;}
-	return (Process*) procs.back();
+	return (Process*) procs.pop_back();
 }
 
 Process* ReadyQueue::peek(){
@@ -201,7 +201,7 @@ void SJFQueue::append(class Process * proc){
 
 Process * SJFQueue::getNext(){
 	if(procs.empty()){return NULL;}
-	return (Process*) procs.back();
+	return (Process*) procs.pop_back();
 }
 Process * SJFQueue::peek(){
 	if(procs.empty()){
