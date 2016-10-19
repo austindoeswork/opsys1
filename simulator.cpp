@@ -152,7 +152,7 @@ std::string ReadyQueue::printQueue(){
 	if (i == 0) {
 		queue += " empty";
 	}
-	queue += "]\n";
+	queue += "]";
 	return queue;
 }
 
@@ -184,7 +184,7 @@ std::string FIFOQueue::printQueue(){
 	if (i == 0) {
 		queue += " empty";
 	}
-	queue += "]\n";
+	queue += "]";
 	return queue;
 }
 
@@ -193,14 +193,27 @@ void SJFQueue::append(class Process * proc){
 		procs.push_back(proc);
 		return;
 	}
-	
 	for (auto it = procs.begin(); it != procs.end(); it++){
-		if ((((*it) -> burst_t()) > proc -> burst_t())){
+		if (((*it) -> burst_t()) > proc -> burst_t()) {
+			it--;
 			procs.insert(it, proc);
 			return;
 		}
+
+		if (((*it) -> burst_t()) == proc -> burst_t()) {
+			if ((*it) -> ID() < proc -> ID()) {
+				procs.insert(it, proc);
+				return;
+			}
+			else {
+				procs.insert(++it, proc);
+				return;
+			}
+		}
 	}
-	procs.push_back(proc);
+	procs.push_front(proc);
+
+	return;
 }
 
 Process * SJFQueue::getNext(){
@@ -228,6 +241,6 @@ std::string SJFQueue::printQueue(){
 	if (i == 0) {
 		queue += " empty";
 	}
-	queue += "]\n";
+	queue += "]";
 	return queue;
 }
