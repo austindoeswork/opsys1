@@ -1,6 +1,7 @@
 //main.cpp
 
 #include <iostream>
+#include <fstream>
 
 #include "parser.h"
 #include "simulator.h"
@@ -23,9 +24,19 @@ float aveCpuTime(std::vector<class Process*> input){
 	return tott/totb;
 }
 
+std::string generateStats(std::string queue, float cput) {
+	std::string output = "Algorithm " + queue;
+	output += "\n -- average CPU burst time: " + std::to_string(cput) + " ms";
+	output += "\n -- average wait time: ms";
+	output += "\n -- average turnaround time: ms";
+	output += "\n -- total number of context switches: ";
+	output += "\n -- total number of preemptions: \n";
+	return output;
+}
+
 int main(int argc, char const *argv[]) {
-	if (argc < 2) {
-		std::cerr << "USAGE: ./a.out <input/file>\n";
+	if (argc != 3) {
+		std::cerr << "USAGE: ./a.out <input-file> <stats-output-file>\n";
 		return 1;
 	}
 	std::vector< class Process* > vp = Parse(argv[1]);
@@ -44,5 +55,13 @@ int main(int argc, char const *argv[]) {
 
 	Simulator sim3(vp);
 	sim3.simulate(&rrq, 84, "RR");
+
+	std::ofstream stats ( argv[2] );
+
+	stats << generateStats("FCFS", aveCpuTime(vp));
+	stats << generateStats("SJF", aveCpuTime(vp));
+	stats << generateStats("RR", aveCpuTime(vp));
+
+	stats.close();
 
 }
