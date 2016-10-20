@@ -9,6 +9,7 @@ class Process {
 	int burstTime;
 	int ioTime;
 	int numBurst;
+	int vectId;
 public:
 	Process(std::string i, int at, int bt, int n, int it);
 	const std::string ID() {return id;}
@@ -16,5 +17,6 @@ public:
 	const int burst_t() {return burstTime;}
 	const int io_t() {return ioTime;}
 	const int num_burst() {return numBurst;}
+	const int vect_id() {return vectId;}
 	void pprint();
 };

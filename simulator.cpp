@@ -27,7 +27,7 @@ void Simulator::simulate(ReadyQueue * rq, int time_slice, std::string name) {
 
 	for (; doneCount != procs.size(); cycle++) {
 
-		//make procs arrice
+		//make procs arrive
 		int i = 0;
 		for (; i < procs.size(); i++) {
 			if (cycle == procs[i]->arrival_t()) {
@@ -45,6 +45,7 @@ void Simulator::simulate(ReadyQueue * rq, int time_slice, std::string name) {
 				printf("time %dms: Process %s started using the CPU %s\n",
 					cycle, nxt->ID().c_str(), rq->printQueue().c_str());
 				csim.append(id, mem.getTimeRemaining(id));
+				contextSCount++;
 			}
 		}
 
@@ -65,6 +66,9 @@ void Simulator::simulate(ReadyQueue * rq, int time_slice, std::string name) {
 					printf("time %dms: Process %s terminated %s\n", time,
 						doneID.c_str(), rq->printQueue().c_str());
 					doneCount++;
+					TT += (time - (procMap[doneID]-> arrival_t()) - 4) / (procMap[doneID] -> num_burst());
+					//TTimes[procMap[doneID]->vect_id()] = time - procMap[doneID]->arrival_t();
+
 				} else { //not done yet
 					printf("time %dms: Process %s completed a CPU burst; %d to go %s\n", time,
 						doneID.c_str(), remainingBursts, rq->printQueue().c_str());
@@ -118,6 +122,18 @@ int Simulator::getPreempt() {
 	return preemptCount;
 }
 
+int Simulator::getContextS() {
+	return contextSCount;
+}
+
+float Simulator::getTT() {
+	return TT;
+}
+
+float Simulator::getWT() {
+	return WT;
+}
+
 // ============================================================================
 // IO =========================================================================
 // ============================================================================
@@ -164,6 +180,7 @@ CPUSim::CPUSim(int ts, int lt, int ut) {
 	t_slice = ts;
 	load_time = lt;
 	unload_time = ut;
+
 	status = 2; //loading
 	cswitch_count = 0;
 }
@@ -201,7 +218,6 @@ IDTime * CPUSim::cycle() {
 			IDTime *cb = new IDTime();
 			cb->id = current_id;
 			cb->time = current_burst_time;
-
 			status = 3; //start unloading
 			cswitch_count = 0;
 			return cb;

@@ -24,12 +24,21 @@ class Simulator {
 	class ReadyQueue *rq;
 	int doneCount;
 	int preemptCount = 0;
+	int contextSCount = 0;
+	float waitTime = 0;
+	float lastLeft = 0;
+	float TT = 0;
+	float WT = 0;
+
 
 public:
 	Simulator(const std::vector<class Process *>); //simulator takes in a vector
 	void pprint();
 	void simulate(ReadyQueue * rq, int time_slice, std::string name); //run sim
 	int getPreempt();
+	int getContextS();
+	float getTT();
+	float getWT();
 };
 
 // ============================================================================
