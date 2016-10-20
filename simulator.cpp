@@ -350,7 +350,6 @@ void SJFQueue::append(class Process * proc){
 	}
 	for (auto it = procs.begin(); it != procs.end(); it++){
 		if (((*it) -> burst_t()) > proc -> burst_t()) {
-			it--;
 			procs.insert(it, proc);
 			return;
 		}
@@ -366,15 +365,15 @@ void SJFQueue::append(class Process * proc){
 			}
 		}
 	}
-	procs.push_front(proc);
+	procs.push_back(proc);
 
 	return;
 }
 
 Process * SJFQueue::getNext(){
 	if(procs.empty()){return NULL;}
-	auto nxt = procs.back();
-	procs.pop_back();
+	auto nxt = procs.front();
+	procs.pop_front();
 	return nxt;
 }
 Process * SJFQueue::peek(){
@@ -382,14 +381,14 @@ Process * SJFQueue::peek(){
 		return NULL;
 	}
 	else{
-		return procs.back();
+		return procs.front();
 	}
 }
 
 std::string SJFQueue::printQueue(){
 	std::string queue = "[Q";
 	int i = 0;
-	for(std::list<Process *>::reverse_iterator it = procs.rbegin(); it != procs.rend(); ++it) {
+	for(auto it = procs.begin(); it != procs.end(); ++it) {
     	queue += " " + (*it)->ID();
 		i++;
 	}

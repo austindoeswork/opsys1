@@ -46,6 +46,14 @@ int main(int argc, char const *argv[])
 	std::vector< class Process* > vp = Parse(argv[1]);
 
 	FIFOQueue rq;
+	SJFQueue sq;
+	FIFOQueue rrq;
 	Simulator sim(vp);
 	sim.simulate(&rq);
+	printf("\n\nFIFO\n\n");
+	Simulator sim2(vp);
+	sim2.simulate(&rrq);
+	printf("\n\nSJF\n\n");
+	Simulator sim3(vp);
+	sim3.simulate(&sq);
 }
