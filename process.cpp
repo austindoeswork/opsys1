@@ -8,6 +8,7 @@ Process::Process(std::string i, int at, int bt, int n, int it) {
 	ioTime = it;
 	numBurst = n;
 	prevTime = at;
+	waitTime = 0;
 }
 
 void Process::pprint() {

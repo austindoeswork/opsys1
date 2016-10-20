@@ -46,7 +46,8 @@ void Simulator::simulate(ReadyQueue * rq, int time_slice, std::string name) {
 					cycle, nxt->ID().c_str(), rq->printQueue().c_str());
 				csim.append(id, mem.getTimeRemaining(id));
 				contextSCount++;
-				nxt->incWT(cycle);
+				nxt->incWT(cycle - 8);
+
 			}
 		}
 
@@ -62,13 +63,12 @@ void Simulator::simulate(ReadyQueue * rq, int time_slice, std::string name) {
 			int rem = doneProc->time;
 			std::string doneID = doneProc->id;
 			if (rem == 0) { //finished cpu burst
-					(procMap[doneID]-> setlast(time));
 				int remainingBursts = mem.decrementBurst(doneID);
 				if (remainingBursts == 0) { //done yo!
 					printf("time %dms: Process %s terminated %s\n", time,
 						doneID.c_str(), rq->printQueue().c_str());
 					doneCount++;
-					WT += (procMap[doneID]->getWait())/ (procMap[doneID]->num_burst());
+					WT += procMap[doneID]->getWait();
 
 				} else { //not done yet
 					printf("time %dms: Process %s completed a CPU burst; %d to go %s\n", time,
@@ -76,7 +76,7 @@ void Simulator::simulate(ReadyQueue * rq, int time_slice, std::string name) {
 
 					if (procMap[doneID]->io_t() == 0) { //no I/O
 						rq->append(procMap[doneID]); //put it back in
-						(procMap[doneID]-> setlast(time));
+						(procMap[doneID]-> setlast(cycle - 1));
 					} else {
 						isim.append(doneID, procMap[doneID]->io_t());
 						printf("time %dms: Process %s blocked on I/O until time %dms %s\n", time,
@@ -90,7 +90,7 @@ void Simulator::simulate(ReadyQueue * rq, int time_slice, std::string name) {
 					csim.append(doneID, rem); //pop that bitch right back in
 				} else { // gets preempted
 					rq->append(procMap[doneID]); // put it back in
-					(procMap[doneID]-> setlast(time));
+					(procMap[doneID]-> setlast(cycle - 1));
 					mem.setTimeRemaining(doneID, rem); //remember
 					printf("time %dms: Time slice expired; Process %s preempted with %d ms to go %s\n",
 						time, doneID.c_str(), rem, rq->printQueue().c_str());

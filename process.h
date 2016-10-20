@@ -9,7 +9,7 @@ class Process {
 	int burstTime;
 	int ioTime;
 	int numBurst;
-	int prevTime;
+	int prevTime = 0;
 	int waitTime = 0;
 
 public:
@@ -19,9 +19,9 @@ public:
 	const int burst_t() {return burstTime;}
 	const int io_t() {return ioTime;}
 	const int num_burst() {return numBurst;}
-	const int lastleft() {return prevTime;}
-	const int getWait() {return waitTime;}
-	void incWT(int cycle){waitTime += (cycle - lastleft());}
+	int lastleft() {return prevTime;}
+	int getWait() {return waitTime;}
+	void incWT(int cycle){waitTime += (cycle - prevTime);}
 	void setlast(int time){prevTime = time;}
 	void pprint();
 };

@@ -33,7 +33,7 @@ std::vector<float> aveCpuTime(std::vector<class Process*> input){
 	return ret;
 }
 
-std::string generateStats(std::string queue, float cput, int pc, int wt, int tt, int csc) {
+std::string generateStats(std::string queue, float cput, float pc, float wt, float tt, float csc) {
 	std::string output = "Algorithm " + queue;
 	output += "\n -- average CPU burst time: " + std::to_string(cput) + " ms";
 	output += "\n -- average wait time: " + std::to_string(wt) + "ms" ;
@@ -49,7 +49,8 @@ int main(int argc, char const *argv[]) {
 		return 1;
 	}
 	std::vector< class Process* > vp = Parse(argv[1]);
-
+	std::vector< class Process* > vp2 = Parse(argv[1]);
+	std::vector< class Process* > vp3 = Parse(argv[1]);
 	FIFOQueue rq;
 	SJFQueue sq;
 	FIFOQueue rrq;
@@ -58,12 +59,12 @@ int main(int argc, char const *argv[]) {
 	sim.simulate(&rq, 0, "FCFS");
 	int pre1 = sim.getPreempt();
 
-	Simulator sim2(vp);
+	Simulator sim2(vp2);
 	sim2.simulate(&sq, 0, "SJF");
 	int pre2 = sim2.getPreempt();
 	printf("\n");
 
-	Simulator sim3(vp);
+	Simulator sim3(vp3);
 	sim3.simulate(&rrq, 84, "RR");
 	int pre3 = sim3.getPreempt();
 
@@ -76,10 +77,9 @@ int main(int argc, char const *argv[]) {
 	double tt1 = sim.getTT() / vect[1];
 	double tt2 = sim2.getTT() / vect[1];
 	double tt3 = sim3.getTT() / vect[1];
-	printf("%f %f %f\n %f %f %f\n", sim.getTT(),sim2.getTT(),sim3.getTT(), vect[0], vect[1], vect[2]);
-	int wt1 = sim.getWT() / procnum;
-	int wt2 = sim2.getWT() / procnum;
-	int wt3 = sim3.getWT() / procnum;
+	float wt1 = sim.getWT() / vect[1];
+	float wt2 = sim2.getWT() / vect[1];
+	float wt3 = sim3.getWT() / vect[1];
 
 	stats << generateStats("FCFS", vect[2], pre1, wt1, tt1, csc1);
 	stats << generateStats("SJF", vect[2], pre2, wt2, tt2, csc2);
