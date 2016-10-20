@@ -10,18 +10,23 @@
 // int t_slice = 84; //rr slice time (milliseconds)
 // int t_cs = 8; //context switch time (milliseconds)
 
-float aveCpuTime(std::vector<class Process*> input){
+std::vector<float> aveCpuTime(std::vector<class Process*> input){
 	float numb = 0;
 	float totb = 0;
 	float btim = 0;
 	float tott = 0;
+	std::vector<float> ret;
 	for(auto it = input.begin(); it != input.end(); it++){
 		numb = (*it) -> num_burst();
 		btim = (*it) -> burst_t();
 		tott += btim * numb;
 		totb += numb;
 	}
-	return tott/totb;
+	ret.push_back(tott);
+	ret.push_back(totb);
+	ret.push_back(tott/totb);
+	printf("%f %f\n", tott, totb);
+	return ret;
 }
 
 std::string generateStats(std::string queue, float cput, int pc, int wt, int tt, int csc) {
@@ -62,18 +67,18 @@ int main(int argc, char const *argv[]) {
 	int csc1 = sim.getContextS();
 	int csc2 = sim2.getContextS();
 	int csc3 = sim3.getContextS();
-	int numprocs = vp.size();
-	int tt1 = sim.getTT() / numprocs;
-	int tt2 = sim2.getTT() / numprocs;
-	int tt3 = sim3.getTT() / numprocs;
+	auto vect = aveCpuTime(vp);
+	double tt1 = sim.getTT() / vect[1];
+	double tt2 = sim2.getTT() / vect[1];
+	double tt3 = sim3.getTT() / vect[1];
+	printf("%f %f %f\n %f %f %f\n", sim.getTT(),sim2.getTT(),sim3.getTT(), vect[0], vect[1], vect[2]);
 	int wt1 = sim.getWT();
 	int wt2 = sim2.getWT();
 	int wt3 = sim3.getWT();
 
-
-	stats << generateStats("FCFS", aveCpuTime(vp), pre1, wt1, tt1, csc1);
-	stats << generateStats("SJF", aveCpuTime(vp), pre2, wt2, tt2, csc2);
-	stats << generateStats("RR", aveCpuTime(vp), pre3, wt3, tt3, csc3);
+	stats << generateStats("FCFS", vect[2], pre1, wt1, tt1, csc1);
+	stats << generateStats("SJF", vect[2], pre2, wt2, tt2, csc2);
+	stats << generateStats("RR", vect[2], pre3, wt3, tt3, csc3);
 
 	stats.close();
 

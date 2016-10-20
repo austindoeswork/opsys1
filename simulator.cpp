@@ -46,6 +46,7 @@ void Simulator::simulate(ReadyQueue * rq, int time_slice, std::string name) {
 					cycle, nxt->ID().c_str(), rq->printQueue().c_str());
 				csim.append(id, mem.getTimeRemaining(id));
 				contextSCount++;
+				TT += cycle - (nxt->lastleft());
 			}
 		}
 
@@ -66,8 +67,7 @@ void Simulator::simulate(ReadyQueue * rq, int time_slice, std::string name) {
 					printf("time %dms: Process %s terminated %s\n", time,
 						doneID.c_str(), rq->printQueue().c_str());
 					doneCount++;
-					TT += (time - (procMap[doneID]-> arrival_t()) - 4) / (procMap[doneID] -> num_burst());
-					//TTimes[procMap[doneID]->vect_id()] = time - procMap[doneID]->arrival_t();
+					TT += (time - (procMap[doneID]-> arrival_t()));
 
 				} else { //not done yet
 					printf("time %dms: Process %s completed a CPU burst; %d to go %s\n", time,

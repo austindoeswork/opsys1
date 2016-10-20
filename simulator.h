@@ -28,7 +28,7 @@ class Simulator {
 	float waitTime = 0;
 	float lastLeft = 0;
 	float TT = 0;
-	float WT = 0;
+	float  WT = 0;
 
 
 public:
