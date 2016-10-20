@@ -6,27 +6,8 @@
 #include <map>
 #include <list>
 #include "process.h"
-//every process is identified by it's ID, not its object
-//do not overwrite the original vector of procs
-//wait on timing? or do we need to think about it in init implementation
 
-/*
-	simulate
-		for not all done
-		if a cpu is free
-			p = get next in ready //depends on method!!!
-				if no ready, break
-				remove p from ready
-			cpu(p)
-		if a cpu finishes a proc p
-			io(p)
-		if io finishes a proc
-			if proc has more bursts
-				ready(p)
-			else
-				done(p)
- */
-
+//IDTime is essentially a pair of string and int (useful for returning 2 values)
 struct IDTime {
 	std::string id;
 	int time;
@@ -37,25 +18,16 @@ struct IDTime {
 // ============================================================================
 
 class Simulator {
-	// int cpuclock //count cycles
-	std::vector<class Process *> procs; //all procs in here?
+	std::vector<class Process *> procs; 
 	std::map<std::string, class Process *> procMap;
-
-
 
 	class ReadyQueue *rq;
 	int doneCount;
-	// IOSim io_s;
-	// CPUSim cpu_s;
 
-	//int cswitch load
-	//int cswitch unload
 public:
-	Simulator(const std::vector<class Process *>); //conclassor takes in a vector
+	Simulator(const std::vector<class Process *>); //simulator takes in a vector
 	void pprint();
 	void simulate(ReadyQueue * rq, int time_slice, std::string name); //run sim
-	//simulate(context_switch_time, method, ?) //execute simulation
-	//reset (reset clock and other stuff)
 };
 
 // ============================================================================
@@ -74,11 +46,11 @@ public:
 // CPU ========================================================================
 // ============================================================================
 
-class CPUSim { //TODO how to deal with load/unload?
-	int status; // 0,1,2,3 (ready, busy, loading, unloading)?
+class CPUSim {
+	int status; // 0,1,2,3 (ready, busy, loading, unloading)
 	int t_slice; //allowed time slice
-	int load_time; //TODO
-	int unload_time; //TODO
+	int load_time;
+	int unload_time;
 
 	std::string current_id;
 	int time_elapsed; //increases with each cycle
@@ -100,8 +72,6 @@ struct ProcMem {
 	int originalBurstTime;
 	int remainingBursts;
 	int timeRemaining;
-
-	//int wait time, ...
 };
 
 class Memory {

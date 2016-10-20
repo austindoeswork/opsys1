@@ -14,24 +14,6 @@ Simulator::Simulator(const std::vector<class Process *> vp) {
 	}
 }
 
-/*
-	simulate
-		for not all done
-		if a cpu is free
-			p = get next in ready //depends on method!!!
-				if no ready, break
-				remove p from ready
-			cpu(p)
-		if a cpu finishes a proc p
-			if 0 remaining
-				io(p)
-			else push back into q
-		if io finishes a proc
-			if proc has more bursts
-				ready(p)
-			else 
-				done(p)
-*/
 
 void Simulator::simulate(ReadyQueue * rq, int time_slice, std::string name) {
 	CPUSim csim(time_slice, 4, 4);
@@ -43,10 +25,9 @@ void Simulator::simulate(ReadyQueue * rq, int time_slice, std::string name) {
 	printf("time %dms: Simulator started for %s [Q empty]\n", cycle, name.c_str());
 
 
-	for (; doneCount != procs.size(); cycle++) { //TODO while shit isn't done
-		// int time = cycle+1;
-		//TODO make procs arrive on time
-		//im getting pretty fucking lazy at this point
+	for (; doneCount != procs.size(); cycle++) {
+
+		//make procs arrice
 		int i = 0;
 		for (; i < procs.size(); i++) {
 			if (cycle == procs[i]->arrival_t()) {
@@ -56,7 +37,6 @@ void Simulator::simulate(ReadyQueue * rq, int time_slice, std::string name) {
 			}
 		}
 
-		// printf("cycle:%d cstatus:%d\n", cycle, csim.getStatus());
 		//is cpu free
 		if (csim.getStatus() == 0) { 
 			auto nxt = rq->getNext();
@@ -70,6 +50,7 @@ void Simulator::simulate(ReadyQueue * rq, int time_slice, std::string name) {
 		
 		int time = cycle + 1; //because we are cycling, we are now "at" time one ahead
 		
+		//only cycle when we need to
 		IDTime * doneProc = NULL;
 		if (csim.getStatus() != 0 && !(csim.getStatus() == 2 && !rq->peek())) {
 			doneProc = csim.cycle();
