@@ -33,13 +33,15 @@ Simulator::Simulator(const std::vector<class Process *> vp) {
 				done(p)
 */
 
-void Simulator::simulate(ReadyQueue * rq) {
-	CPUSim csim(0, 4, 4);
+void Simulator::simulate(ReadyQueue * rq, int time_slice, std::string name) {
+	CPUSim csim(time_slice, 4, 4);
 	Memory mem(procs);
 	IOSim isim;
 
 
 	int cycle = 0;
+	printf("time %dms: Simulator started for %s [Q empty]\n", cycle, name.c_str());
+
 
 	for (; doneCount != procs.size(); cycle++) { //TODO while shit isn't done
 		// int time = cycle+1;
@@ -83,8 +85,8 @@ void Simulator::simulate(ReadyQueue * rq) {
 						doneID.c_str(), rq->printQueue().c_str());
 					doneCount++;
 				} else { //not done yet
-					printf("time %dms: Process %s completed a CPU burst; %d to go %s %d\n", time, 
-						doneID.c_str(), remainingBursts, rq->printQueue().c_str(), csim.getStatus());
+					printf("time %dms: Process %s completed a CPU burst; %d to go %s\n", time, 
+						doneID.c_str(), remainingBursts, rq->printQueue().c_str());
 					
 					if (procMap[doneID]->io_t() == 0) { //no I/O
 						rq->append(procMap[doneID]); //put it back in
@@ -95,8 +97,16 @@ void Simulator::simulate(ReadyQueue * rq) {
 					}
 				}
 			} else { //some cpu still remaining
-				rq->append(procMap[doneID]); // put it back in
-				mem.setTimeRemaining(doneID, rem); //remember
+				if (!rq->peek()) { //if q empty
+					printf("time %dms: Time slice expired; no preemption because ready queue is empty %s\n",
+						time, rq->printQueue().c_str());
+					csim.append(doneID, rem); //pop that bitch right back in
+				} else { // gets preempted
+					rq->append(procMap[doneID]); // put it back in
+					mem.setTimeRemaining(doneID, rem); //remember
+					printf("time %dms: Time slice expired; Process %s preempted with %d ms to go %s\n",
+						time, doneID.c_str(), rem, rq->printQueue().c_str());
+				}
 			}
 		}
 
@@ -106,11 +116,11 @@ void Simulator::simulate(ReadyQueue * rq) {
 		for(; io_i<ioDoneProcs.size(); io_i++){ //iterate thru done io's
 			std::string doneID = ioDoneProcs[io_i];
 			rq->append(procMap[doneID]);
-			printf("time %dms: process %s completed I/O %s %d\n", time, doneID.c_str(),
-				rq->printQueue().c_str(), csim.getStatus());
+			printf("time %dms: process %s completed I/O %s\n", time, doneID.c_str(),
+				rq->printQueue().c_str());
 		}
 	}
-
+	printf("time %dms: Simulator ended for %s\n", cycle + 4, name.c_str());
 }
 
 void Simulator::pprint() {
@@ -174,7 +184,7 @@ CPUSim::CPUSim(int ts, int lt, int ut) {
 
 int CPUSim::append(std::string id, int time) {
 
-	if (status != 0) {
+	if (status != 0 && id != current_id) {
 		printf("WARNING -- APPENDING TO BUSY CPU\n");
 		return -1;
 	}

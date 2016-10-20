@@ -42,18 +42,21 @@ int main(int argc, char const *argv[])
 		std::cerr << "USAGE: ./a.out <input/file>\n";
 		return 1;
 	}
-	// PrintFile(argv[1]);
 	std::vector< class Process* > vp = Parse(argv[1]);
 
 	FIFOQueue rq;
 	SJFQueue sq;
 	FIFOQueue rrq;
+
 	Simulator sim(vp);
-	sim.simulate(&rq);
-	printf("\n\nFIFO\n\n");
+	sim.simulate(&rq, 0, "FCFS");
+	printf("\n");
+
 	Simulator sim2(vp);
-	sim2.simulate(&rrq);
-	printf("\n\nSJF\n\n");
+	sim2.simulate(&sq, 0, "SJF");
+	printf("\n");
+
 	Simulator sim3(vp);
-	sim3.simulate(&sq);
+	sim3.simulate(&rrq, 84, "RR");
+
 }

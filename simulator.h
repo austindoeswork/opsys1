@@ -53,7 +53,7 @@ class Simulator {
 public:
 	Simulator(const std::vector<class Process *>); //conclassor takes in a vector
 	void pprint();
-	void simulate(ReadyQueue * rq); //run sim
+	void simulate(ReadyQueue * rq, int time_slice, std::string name); //run sim
 	//simulate(context_switch_time, method, ?) //execute simulation
 	//reset (reset clock and other stuff)
 };
