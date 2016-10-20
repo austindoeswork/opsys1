@@ -10,6 +10,10 @@
 // int t_slice = 84; //rr slice time (milliseconds)
 // int t_cs = 8; //context switch time (milliseconds)
 
+int processIOT(Process * proc) {
+	return ((proc->io_t()) * (proc->burst_t()-1));
+}
+
 std::vector<float> aveCpuTime(std::vector<class Process*> input){
 	float numb = 0;
 	float totb = 0;
