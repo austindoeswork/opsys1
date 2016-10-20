@@ -48,43 +48,4 @@ int main(int argc, char const *argv[])
 	FIFOQueue rq;
 	Simulator sim(vp);
 	sim.simulate(&rq);
-	// sim.pprint();
-
-	// CPUSim csim(10,5,5);
-	// csim.append("A", 168);
-
-	// IDTime * cburst = csim.cycle();
-	// for (; !cburst; cburst = csim.cycle()) {
-	// 		printf("%s\n", "not done yet.");
-	// }
-	// if (cburst) {
-	// 		printf("%s\n", cburst->id.c_str());
-	// 		printf("%d\n", cburst->time);
-	// }
-
-
-	// Memory mem(vp);
-	// mem.pprint();
-	// mem.decrementBurst("A");
-	// printf("%d\n", mem.decrementBurst("A"));
-
-	// IOSim isim;
-	// isim.append("A", 1);
-	// isim.append("B", 2);
-	// isim.append("C", 2);
-	// auto v = isim.cycle();
-	// printf("%lu\n", v.size());
-	// v = isim.cycle();
-	// printf("%lu\n", v.size());
-	// v = isim.cycle();
-	// printf("%lu\n", v.size());
-
-	SJFQueue rq2;
-	std::cout << rq2.printQueue();
-	rq2.append(vp[2]);
-	// std::cout << rq2.printQueue();
-	rq2.append(vp[0]);
-	rq2.append(vp[1]);
-	std::cout << rq2.printQueue();
-	printf("\nAverage time is %f\n", aveCpuTime(vp));
 }

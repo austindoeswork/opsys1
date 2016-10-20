@@ -74,16 +74,17 @@ public:
 // CPU ========================================================================
 // ============================================================================
 
-
 class CPUSim { //TODO how to deal with load/unload?
-	int status; // 0,1,2,3 (running, free, loading, unloading)?
+	int status; // 0,1,2,3 (ready, busy, loading, unloading)?
 	int t_slice; //allowed time slice
 	int load_time; //TODO
 	int unload_time; //TODO
 
-	int time_elapsed; //increases with each cycle
 	std::string current_id;
+	int time_elapsed; //increases with each cycle
 	int current_burst_time; //decreases with each cycle
+	int cswitch_count; //count cycles spent context switching
+
 public:
 	CPUSim(int ts, int lt, int ut); //ts = 0 or less for no slicing
 	int append(std::string id, int time); // (add a burst to the cpusim) return success

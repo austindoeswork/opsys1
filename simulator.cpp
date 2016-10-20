@@ -34,7 +34,7 @@ Simulator::Simulator(const std::vector<class Process *> vp) {
 */
 
 void Simulator::simulate(ReadyQueue * rq) {
-	CPUSim csim(0, 5, 5);
+	CPUSim csim(0, 4, 4);
 	Memory mem(procs);
 	IOSim isim;
 
@@ -48,9 +48,9 @@ void Simulator::simulate(ReadyQueue * rq) {
 		int i = 0;
 		for (; i < procs.size(); i++) {
 			if (cycle == procs[i]->arrival_t()) {
+				rq->append(procs[i]);
 				printf("time %dms: Process %s arrived %s\n", cycle, procs[i]->ID().c_str(),
 					rq->printQueue().c_str());
-				rq->append(procs[i]);
 			}
 		}
 
@@ -67,27 +67,33 @@ void Simulator::simulate(ReadyQueue * rq) {
 		}
 		
 		int time = cycle + 1; //because we are cycling, we are now "at" time one ahead
+		
+		IDTime * doneProc = NULL;
+		if (csim.getStatus() != 0 && !(csim.getStatus() == 2 && !rq->peek())) {
+			doneProc = csim.cycle();
+		}
 		//did cpu finish a proc
-		auto doneProc = csim.cycle();
 		if (doneProc) {
-			auto rem = doneProc->time;
-			auto doneID = doneProc->id;
+			int rem = doneProc->time;
+			std::string doneID = doneProc->id;
 			if (rem == 0) { //finished cpu burst 
-				printf("time %dms: Process %s completed a CPU burst; %d to go %s\n", time, 
-					doneID.c_str(), mem.remainingBursts(doneID)-1, rq->printQueue().c_str());
-				if (procMap[doneID]->io_t() == 0) {
-					int rem = mem.decrementBurst(doneID);
-					if (rem == 0) {
-						doneCount++;
+				int remainingBursts = mem.decrementBurst(doneID);
+				if (remainingBursts == 0) { //done yo!
+					printf("time %dms: Process %s terminated %s\n", time, 
+						doneID.c_str(), rq->printQueue().c_str());
+					doneCount++;
+				} else { //not done yet
+					printf("time %dms: Process %s completed a CPU burst; %d to go %s %d\n", time, 
+						doneID.c_str(), remainingBursts, rq->printQueue().c_str(), csim.getStatus());
+					
+					if (procMap[doneID]->io_t() == 0) { //no I/O
+						rq->append(procMap[doneID]); //put it back in
 					} else {
-						rq->append(procMap[doneID]);
+						isim.append(doneID, procMap[doneID]->io_t());
+						printf("time %dms: Process %s blocked on I/O until time %dms %s\n", time, 
+							doneID.c_str(), time+procMap[doneID]->io_t(), rq->printQueue().c_str());
 					}
-				} else {
-					isim.append(doneID, procMap[doneID]->io_t());
-					printf("time %dms: Process %s blocked on I/O until time %dms %s\n", time, 
-						doneID.c_str(), time+procMap[doneID]->io_t(), rq->printQueue().c_str());
 				}
-
 			} else { //some cpu still remaining
 				rq->append(procMap[doneID]); // put it back in
 				mem.setTimeRemaining(doneID, rem); //remember
@@ -95,27 +101,15 @@ void Simulator::simulate(ReadyQueue * rq) {
 		}
 
 		//did io finish anything
-		auto ioDoneProcs = isim.cycle();
+		std::vector<std::string> ioDoneProcs = isim.cycle();
 		int io_i = 0;
 		for(; io_i<ioDoneProcs.size(); io_i++){ //iterate thru done io's
-			auto doneID = ioDoneProcs[io_i];
-			int rem = mem.decrementBurst(doneID);
-			if (rem == 0) {
-				doneCount++;
-			} else {
-				rq->append(procMap[doneID]);
-			}
-			printf("time %dms: process %s completed I/O %s\n", time, doneID.c_str(),
-				rq->printQueue().c_str());
-			// isim.pprint();
+			std::string doneID = ioDoneProcs[io_i];
+			rq->append(procMap[doneID]);
+			printf("time %dms: process %s completed I/O %s %d\n", time, doneID.c_str(),
+				rq->printQueue().c_str(), csim.getStatus());
 		}
-
-			// printf("cycle: %d csimstatus: %d\n", cycle, csim.getStatus());
-			// mem.pprint();
 	}
-
-
-
 
 }
 
@@ -135,7 +129,7 @@ void Simulator::pprint() {
 int IOSim::append(std::string i, int t) {
 	IDTime it;
 	it.id = i;
-	it.time = t;
+	it.time = t+1; //because we cycle on same iteration
 	procs.push_back(it);
 	return 0;
 }
@@ -174,10 +168,17 @@ CPUSim::CPUSim(int ts, int lt, int ut) {
 	t_slice = ts;
 	load_time = lt;
 	unload_time = ut;
-	status = 0; //free
+	status = 2; //loading
+	cswitch_count = 0;
 }
 
 int CPUSim::append(std::string id, int time) {
+
+	if (status != 0) {
+		printf("WARNING -- APPENDING TO BUSY CPU\n");
+		return -1;
+	}
+
 	status = 1; //busy
 	current_burst_time = time;
 	current_id = id;
@@ -186,27 +187,50 @@ int CPUSim::append(std::string id, int time) {
 	return 0;
 }
 
-int CPUSim::getStatus() { //TODO
+int CPUSim::getStatus() {
 	return status;
 }
 
 IDTime * CPUSim::cycle() {
-	// printf("CPU RUNNING : %s\n", current_id.c_str());
+	//status -- READY
 	if (status == 0) {
-		return NULL;	
-	}
-	//status -- RUNNING
-	current_burst_time--;
-	time_elapsed++;
-	if (current_burst_time <= 0 || (t_slice > 0  && time_elapsed >= t_slice)) {
-		IDTime *cb = new IDTime();
-		cb->id = current_id;
-		cb->time = current_burst_time;
-		status = 0;
-		return cb;
-	} else {
+		printf("WARNING -- EMPTY CPU CYCLE\n");
 		return NULL;
 	}
+	//status -- RUNNING (BUSY)
+	if (status == 1) {
+		current_burst_time--;
+		time_elapsed++;
+		if (current_burst_time <= 0 || (t_slice > 0  && time_elapsed >= t_slice)) {
+			IDTime *cb = new IDTime();
+			cb->id = current_id;
+			cb->time = current_burst_time;
+			
+			status = 3; //start unloading
+			cswitch_count = 0;
+			return cb;
+		} else {
+			return NULL;
+		}
+	}
+	//status -- UNLOADING (BUSY)
+	if (status == 3) {
+		cswitch_count++;
+		if (cswitch_count == unload_time) {
+			cswitch_count = 0; //start loading
+			status = 2;
+		}
+		return NULL;
+	}
+	//status -- LOADING (BUSY)
+	if (status == 2) {
+		cswitch_count++;
+		if (cswitch_count == load_time) {
+			status = 0; //READY
+		}
+		return NULL;
+	}
+	return NULL;
 }
 
 // ============================================================================
