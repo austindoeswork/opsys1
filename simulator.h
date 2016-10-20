@@ -18,16 +18,18 @@ struct IDTime {
 // ============================================================================
 
 class Simulator {
-	std::vector<class Process *> procs; 
+	std::vector<class Process *> procs;
 	std::map<std::string, class Process *> procMap;
 
 	class ReadyQueue *rq;
 	int doneCount;
+	int preemptCount = 0;
 
 public:
 	Simulator(const std::vector<class Process *>); //simulator takes in a vector
 	void pprint();
 	void simulate(ReadyQueue * rq, int time_slice, std::string name); //run sim
+	int getPreempt();
 };
 
 // ============================================================================

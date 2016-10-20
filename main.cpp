@@ -24,13 +24,13 @@ float aveCpuTime(std::vector<class Process*> input){
 	return tott/totb;
 }
 
-std::string generateStats(std::string queue, float cput) {
+std::string generateStats(std::string queue, float cput, int pc) {
 	std::string output = "Algorithm " + queue;
 	output += "\n -- average CPU burst time: " + std::to_string(cput) + " ms";
 	output += "\n -- average wait time: ms";
 	output += "\n -- average turnaround time: ms";
 	output += "\n -- total number of context switches: ";
-	output += "\n -- total number of preemptions: \n";
+	output += "\n -- total number of preemptions: " + std::to_string(pc) + "\n";
 	return output;
 }
 
@@ -47,20 +47,22 @@ int main(int argc, char const *argv[]) {
 
 	Simulator sim(vp);
 	sim.simulate(&rq, 0, "FCFS");
-	printf("\n");
+	int pre1 = sim.getPreempt();
 
 	Simulator sim2(vp);
 	sim2.simulate(&sq, 0, "SJF");
+	int pre2 = sim2.getPreempt();
 	printf("\n");
 
 	Simulator sim3(vp);
 	sim3.simulate(&rrq, 84, "RR");
+	int pre3 = sim3.getPreempt();
 
 	std::ofstream stats ( argv[2] );
 
-	stats << generateStats("FCFS", aveCpuTime(vp));
-	stats << generateStats("SJF", aveCpuTime(vp));
-	stats << generateStats("RR", aveCpuTime(vp));
+	stats << generateStats("FCFS", aveCpuTime(vp), pre1);
+	stats << generateStats("SJF", aveCpuTime(vp), pre2);
+	stats << generateStats("RR", aveCpuTime(vp), pre3);
 
 	stats.close();
 
