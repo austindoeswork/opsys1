@@ -72,13 +72,14 @@ int main(int argc, char const *argv[]) {
 	int csc2 = sim2.getContextS();
 	int csc3 = sim3.getContextS();
 	auto vect = aveCpuTime(vp);
+	int procnum = vp.size();
 	double tt1 = sim.getTT() / vect[1];
 	double tt2 = sim2.getTT() / vect[1];
 	double tt3 = sim3.getTT() / vect[1];
 	printf("%f %f %f\n %f %f %f\n", sim.getTT(),sim2.getTT(),sim3.getTT(), vect[0], vect[1], vect[2]);
-	int wt1 = sim.getWT();
-	int wt2 = sim2.getWT();
-	int wt3 = sim3.getWT();
+	int wt1 = sim.getWT() / procnum;
+	int wt2 = sim2.getWT() / procnum;
+	int wt3 = sim3.getWT() / procnum;
 
 	stats << generateStats("FCFS", vect[2], pre1, wt1, tt1, csc1);
 	stats << generateStats("SJF", vect[2], pre2, wt2, tt2, csc2);

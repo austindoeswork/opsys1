@@ -46,7 +46,7 @@ void Simulator::simulate(ReadyQueue * rq, int time_slice, std::string name) {
 					cycle, nxt->ID().c_str(), rq->printQueue().c_str());
 				csim.append(id, mem.getTimeRemaining(id));
 				contextSCount++;
-				TT += cycle - (nxt->lastleft());
+				nxt->incWT(cycle);
 			}
 		}
 
@@ -62,12 +62,13 @@ void Simulator::simulate(ReadyQueue * rq, int time_slice, std::string name) {
 			int rem = doneProc->time;
 			std::string doneID = doneProc->id;
 			if (rem == 0) { //finished cpu burst
+					(procMap[doneID]-> setlast(time));
 				int remainingBursts = mem.decrementBurst(doneID);
 				if (remainingBursts == 0) { //done yo!
 					printf("time %dms: Process %s terminated %s\n", time,
 						doneID.c_str(), rq->printQueue().c_str());
 					doneCount++;
-					TT += (time - (procMap[doneID]-> arrival_t()));
+					WT += (procMap[doneID]->getWait())/ (procMap[doneID]->num_burst());
 
 				} else { //not done yet
 					printf("time %dms: Process %s completed a CPU burst; %d to go %s\n", time,
@@ -75,6 +76,7 @@ void Simulator::simulate(ReadyQueue * rq, int time_slice, std::string name) {
 
 					if (procMap[doneID]->io_t() == 0) { //no I/O
 						rq->append(procMap[doneID]); //put it back in
+						(procMap[doneID]-> setlast(time));
 					} else {
 						isim.append(doneID, procMap[doneID]->io_t());
 						printf("time %dms: Process %s blocked on I/O until time %dms %s\n", time,
@@ -88,6 +90,7 @@ void Simulator::simulate(ReadyQueue * rq, int time_slice, std::string name) {
 					csim.append(doneID, rem); //pop that bitch right back in
 				} else { // gets preempted
 					rq->append(procMap[doneID]); // put it back in
+					(procMap[doneID]-> setlast(time));
 					mem.setTimeRemaining(doneID, rem); //remember
 					printf("time %dms: Time slice expired; Process %s preempted with %d ms to go %s\n",
 						time, doneID.c_str(), rem, rq->printQueue().c_str());
@@ -102,6 +105,7 @@ void Simulator::simulate(ReadyQueue * rq, int time_slice, std::string name) {
 		for(; io_i<ioDoneProcs.size(); io_i++){ //iterate thru done io's
 			std::string doneID = ioDoneProcs[io_i];
 			rq->append(procMap[doneID]);
+			(procMap[doneID]-> setlast(time));
 			printf("time %dms: process %s completed I/O %s\n", time, doneID.c_str(),
 				rq->printQueue().c_str());
 		}
