@@ -21,6 +21,7 @@ public:
 	const int num_burst() {return numBurst;}
 	int lastleft() {return prevTime;}
 	int getWait() {return waitTime;}
+	int waitToTT() {return (waitTime + numBurst*burstTime);}
 	void incWT(int cycle){waitTime += (cycle - prevTime);}
 	void setlast(int time){prevTime = time;}
 	void pprint();

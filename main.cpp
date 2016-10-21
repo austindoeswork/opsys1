@@ -29,11 +29,10 @@ std::vector<float> aveCpuTime(std::vector<class Process*> input){
 	ret.push_back(tott);
 	ret.push_back(totb);
 	ret.push_back(tott/totb);
-	// printf("%f %f\n", tott, totb);
 	return ret;
 }
 
-std::string generateStats(std::string queue, float cput, float pc, float wt, float tt, float csc) {
+std::string generateStats(std::string queue, float cput, int pc, float wt, double tt, int csc) {
 	std::string output = "Algorithm " + queue;
 	output += "\n -- average CPU burst time: " + std::to_string(cput) + " ms";
 	output += "\n -- average wait time: " + std::to_string(wt) + "ms" ;
@@ -73,13 +72,17 @@ int main(int argc, char const *argv[]) {
 	int csc2 = sim2.getContextS();
 	int csc3 = sim3.getContextS();
 	auto vect = aveCpuTime(vp);
-	// int procnum = vp.size();
-	double tt1 = sim.getTT() / vect[1];
-	double tt2 = sim2.getTT() / vect[1];
-	double tt3 = sim3.getTT() / vect[1];
+	double tt1 = sim.getTT() / sim.getSwaps(); // vect[1];
+	double tt2 = sim2.getTT() / sim2.getSwaps(); // vect[1];
+	double tt3 = sim3.getTT() / sim3.getSwaps(); // vect[1];
 	float wt1 = sim.getWT() / vect[1];
 	float wt2 = sim2.getWT() / vect[1];
 	float wt3 = sim3.getWT() / vect[1];
+	if((vp.size() == 1)){
+		wt1 = 0;
+		wt2 = 0;
+		wt3 = 0;
+	}	
 
 	stats << generateStats("FCFS", vect[2], pre1, wt1, tt1, csc1);
 	stats << generateStats("SJF", vect[2], pre2, wt2, tt2, csc2);

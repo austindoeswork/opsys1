@@ -46,7 +46,6 @@ void Simulator::simulate(ReadyQueue * rq, int time_slice, std::string name) {
 				csim.append(id, mem.getTimeRemaining(id));
 				contextSCount++;
 				nxt->incWT(cycle - 8);
-
 			}
 		}
 
@@ -62,20 +61,21 @@ void Simulator::simulate(ReadyQueue * rq, int time_slice, std::string name) {
 			int rem = doneProc->time;
 			std::string doneID = doneProc->id;
 			if (rem == 0) { //finished cpu burst
+				swaps++;
 				int remainingBursts = mem.decrementBurst(doneID);
 				if (remainingBursts == 0) { //done yo!
 					printf("time %dms: Process %s terminated %s\n", time,
 						doneID.c_str(), rq->printQueue().c_str());
 					doneCount++;
 					WT += procMap[doneID]->getWait();
-
+					TT += procMap[doneID]->waitToTT();
 				} else { //not done yet
 					printf("time %dms: Process %s completed a CPU burst; %d to go %s\n", time,
 						doneID.c_str(), remainingBursts, rq->printQueue().c_str());
 
 					if (procMap[doneID]->io_t() == 0) { //no I/O
 						rq->append(procMap[doneID]); //put it back in
-						(procMap[doneID]-> setlast(cycle - 1));
+						(procMap[doneID]-> setlast(cycle));
 					} else {
 						isim.append(doneID, procMap[doneID]->io_t());
 						printf("time %dms: Process %s blocked on I/O until time %dms %s\n", time,
@@ -89,7 +89,7 @@ void Simulator::simulate(ReadyQueue * rq, int time_slice, std::string name) {
 					csim.append(doneID, rem); //pop that bitch right back in
 				} else { // gets preempted
 					rq->append(procMap[doneID]); // put it back in
-					(procMap[doneID]-> setlast(cycle - 1));
+					(procMap[doneID]-> setlast(cycle));
 					mem.setTimeRemaining(doneID, rem); //remember
 					printf("time %dms: Time slice expired; process %s preempted with %dms to go %s\n",
 						time, doneID.c_str(), rem, rq->printQueue().c_str());
@@ -104,7 +104,7 @@ void Simulator::simulate(ReadyQueue * rq, int time_slice, std::string name) {
 		for(; io_i<ioDoneProcs.size(); io_i++){ //iterate thru done io's
 			std::string doneID = ioDoneProcs[io_i];
 			rq->append(procMap[doneID]);
-			(procMap[doneID]-> setlast(time));
+			(procMap[doneID]-> setlast(cycle));
 			printf("time %dms: Process %s completed I/O %s\n", time, doneID.c_str(),
 				rq->printQueue().c_str());
 		}
@@ -135,6 +135,10 @@ float Simulator::getTT() {
 
 float Simulator::getWT() {
 	return WT;
+}
+
+int Simulator::getSwaps() {
+	return swaps;
 }
 
 // ============================================================================
