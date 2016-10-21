@@ -29,7 +29,7 @@ std::vector<float> aveCpuTime(std::vector<class Process*> input){
 	ret.push_back(tott);
 	ret.push_back(totb);
 	ret.push_back(tott/totb);
-	printf("%f %f\n", tott, totb);
+	// printf("%f %f\n", tott, totb);
 	return ret;
 }
 
@@ -73,7 +73,7 @@ int main(int argc, char const *argv[]) {
 	int csc2 = sim2.getContextS();
 	int csc3 = sim3.getContextS();
 	auto vect = aveCpuTime(vp);
-	int procnum = vp.size();
+	// int procnum = vp.size();
 	double tt1 = sim.getTT() / vect[1];
 	double tt2 = sim2.getTT() / vect[1];
 	double tt3 = sim3.getTT() / vect[1];

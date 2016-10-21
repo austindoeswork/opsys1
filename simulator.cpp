@@ -1,4 +1,4 @@
-// simulator.cpp
+// simulator.cpp /hello
 #include "simulator.h"
 
 // ============================================================================
@@ -7,8 +7,8 @@
 
 Simulator::Simulator(const std::vector<class Process *> vp) {
 	procs = vp;
-	int i = 0;
 	doneCount = 0;
+	unsigned int i = 0;
 	for (; i < vp.size(); i++){ //create map
 		procMap[vp[i]->ID()] = vp[i];
 	}
@@ -21,16 +21,15 @@ void Simulator::simulate(ReadyQueue * rq, int time_slice, std::string name) {
 	IOSim isim;
 
 
-	int cycle = 0;
+	unsigned int cycle = 0;
 	printf("time %dms: Simulator started for %s [Q empty]\n", cycle, name.c_str());
 
-
-	for (; doneCount != procs.size(); cycle++) {
+	for (; (unsigned int) doneCount != procs.size(); cycle++) {
 
 		//make procs arrive
-		int i = 0;
+		unsigned int i = 0;
 		for (; i < procs.size(); i++) {
-			if (cycle == procs[i]->arrival_t()) {
+			if (cycle == (unsigned int)procs[i]->arrival_t()) {
 				rq->append(procs[i]);
 				printf("time %dms: Process %s arrived %s\n", cycle, procs[i]->ID().c_str(),
 					rq->printQueue().c_str());
@@ -92,7 +91,7 @@ void Simulator::simulate(ReadyQueue * rq, int time_slice, std::string name) {
 					rq->append(procMap[doneID]); // put it back in
 					(procMap[doneID]-> setlast(cycle - 1));
 					mem.setTimeRemaining(doneID, rem); //remember
-					printf("time %dms: Time slice expired; Process %s preempted with %d ms to go %s\n",
+					printf("time %dms: Time slice expired; process %s preempted with %dms to go %s\n",
 						time, doneID.c_str(), rem, rq->printQueue().c_str());
 					preemptCount++;
 				}
@@ -101,12 +100,12 @@ void Simulator::simulate(ReadyQueue * rq, int time_slice, std::string name) {
 
 		//did io finish anything
 		std::vector<std::string> ioDoneProcs = isim.cycle();
-		int io_i = 0;
+		unsigned int io_i = 0;
 		for(; io_i<ioDoneProcs.size(); io_i++){ //iterate thru done io's
 			std::string doneID = ioDoneProcs[io_i];
 			rq->append(procMap[doneID]);
 			(procMap[doneID]-> setlast(time));
-			printf("time %dms: process %s completed I/O %s\n", time, doneID.c_str(),
+			printf("time %dms: Process %s completed I/O %s\n", time, doneID.c_str(),
 				rq->printQueue().c_str());
 		}
 	}
@@ -114,7 +113,7 @@ void Simulator::simulate(ReadyQueue * rq, int time_slice, std::string name) {
 }
 
 void Simulator::pprint() {
-	int i = 0;
+	unsigned int i = 0;
 	for (; i < procs.size(); i++){
 		printf("====================\n");
 		procs[i]->pprint();
@@ -153,8 +152,8 @@ int IOSim::append(std::string i, int t) {
 std::vector<std::string> IOSim::cycle() {
 	std::vector<std::string> finished;
 	std::vector<struct IDTime> unfinished;
-
-	int i = 0;
+	
+	unsigned int i = 0;
 	for (; i < procs.size(); i++) {
 		procs[i].time--;
 		if (procs[i].time <= 0) {
@@ -169,7 +168,7 @@ std::vector<std::string> IOSim::cycle() {
 }
 
 void IOSim::pprint() {
-	int i = 0;
+	unsigned int i = 0; 
 	for (; i < procs.size(); i++) {
 		printf("%s ", procs[i].id.c_str());
 	}
@@ -254,7 +253,7 @@ IDTime * CPUSim::cycle() {
 // ============================================================================
 
 Memory::Memory(const std::vector<class Process *> vp) {
-	int i = 0;
+	unsigned int i = 0;
 	for (; i < vp.size(); i++){
 		ProcMem *pm = new ProcMem();
 		pm->remainingBursts = vp[i]->num_burst();

@@ -8,7 +8,7 @@ std::vector<class Process *> Parse(char const * filename);
 //PRETTYPRINT
 void PrintFile(char const * filename) {
 	std::vector<class Process *> pv = Parse(filename);
-	int i = 0;
+	unsigned int i = 0;
 	for (; i < pv.size(); i++){
 		printf("====================\n");
 		pv[i]->pprint();
@@ -65,7 +65,7 @@ std::vector<class Process *> Parse(char const *filename){
 			procVec.push_back(proc);
 	    }
 	    
-	    int i = 0;
+	    unsigned int i = 0;
 	    for (; i < tokenVec.size(); i++){
 	    	free(tokenVec[i]);
 	    }
