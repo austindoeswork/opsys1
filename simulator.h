@@ -13,33 +13,6 @@ struct IDTime {
 	int time;
 };
 
-// ============================================================================
-// SIM ========================================================================
-// ============================================================================
-
-class Simulator {
-	std::vector<class Process *> procs;
-	std::map<std::string, class Process *> procMap;
-
-	class ReadyQueue *rq;
-	int doneCount;
-	int preemptCount = 0;
-	int contextSCount = 0;
-	float waitTime = 0;
-	float lastLeft = 0;
-	float TT = 0;
-	float  WT = 0;
-
-
-public:
-	Simulator(const std::vector<class Process *>); //simulator takes in a vector
-	void pprint();
-	void simulate(ReadyQueue * rq, int time_slice, std::string name); //run sim
-	int getPreempt();
-	int getContextS();
-	float getTT();
-	float getWT();
-};
 
 // ============================================================================
 // IO =========================================================================
@@ -126,4 +99,32 @@ public:
 	class Process * getNext(); //will return NULL if no next
 	class Process * peek(); //will return NULL if no next
 
+};
+
+// ============================================================================
+// SIM ========================================================================
+// ============================================================================
+
+class Simulator {
+	std::vector<class Process *> procs;
+	std::map<std::string, class Process *> procMap;
+
+	class ReadyQueue *rq;
+	int doneCount;
+	int preemptCount = 0;
+	int contextSCount = 0;
+	float waitTime = 0;
+	float lastLeft = 0;
+	float TT = 0;
+	float  WT = 0;
+
+
+public:
+	Simulator(const std::vector<class Process *>); //simulator takes in a vector
+	void pprint();
+	void simulate(ReadyQueue * rq, int time_slice, std::string name); //run sim
+	int getPreempt();
+	int getContextS();
+	float getTT();
+	float getWT();
 };
