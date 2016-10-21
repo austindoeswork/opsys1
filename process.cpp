@@ -1,4 +1,6 @@
 // process.cpp
+// Partners: Austin Wilson, Samuel Johnston, Theodore Rice
+
 #include "process.h"
 
 Process::Process(std::string i, int at, int bt, int n, int it) {

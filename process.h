@@ -1,4 +1,6 @@
 // process.h
+// Partners: Austin Wilson, Samuel Johnston, Theodore Rice
+
 #pragma once
 #include <string>
 #include <iostream>

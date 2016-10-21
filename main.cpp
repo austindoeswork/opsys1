@@ -1,7 +1,10 @@
 //main.cpp
+// Partners: Austin Wilson, Samuel Johnston, Theodore Rice
 
 #include <iostream>
 #include <fstream>
+#include <sstream>
+#include <iomanip>
 
 #include "parser.h"
 #include "simulator.h"
@@ -32,13 +35,16 @@ std::vector<float> aveCpuTime(std::vector<class Process*> input){
 	return ret;
 }
 
-std::string generateStats(std::string queue, float cput, int pc, float wt, double tt, int csc) {
+std::string generateStats(std::string queue, float cput, float pc, float wt, float tt, float csc) {
+	std::stringstream ss;
+	ss << std::fixed << std::setprecision(2) << cput;
+	std::string ans = ss.str();
 	std::string output = "Algorithm " + queue;
-	output += "\n -- average CPU burst time: " + std::to_string(cput) + " ms";
-	output += "\n -- average wait time: " + std::to_string(wt) + "ms" ;
-	output += "\n -- average turnaround time: " + std::to_string(tt) + "ms";
-	output += "\n -- total number of context switches: " + std::to_string(csc);
-	output += "\n -- total number of preemptions: " + std::to_string(pc) + "\n";
+	output += "\n -- average CPU burst time: " + ans + " ms";
+	output += "\n -- average wait time: " + std::to_string(wt) + " ms" ;
+	output += "\n -- average turnaround time: " + std::to_string(tt) + " ms";
+	output += "\n -- total number of context switches: " + std::to_string((int) csc);
+	output += "\n -- total number of preemptions: " + std::to_string((int) pc) + "\n";
 	return output;
 }
 
@@ -57,6 +63,7 @@ int main(int argc, char const *argv[]) {
 	Simulator sim(vp);
 	sim.simulate(&rq, 0, "FCFS");
 	int pre1 = sim.getPreempt();
+	printf("\n");
 
 	Simulator sim2(vp2);
 	sim2.simulate(&sq, 0, "SJF");
@@ -82,7 +89,7 @@ int main(int argc, char const *argv[]) {
 		wt1 = 0;
 		wt2 = 0;
 		wt3 = 0;
-	}	
+	}
 
 	stats << generateStats("FCFS", vect[2], pre1, wt1, tt1, csc1);
 	stats << generateStats("SJF", vect[2], pre2, wt2, tt2, csc2);

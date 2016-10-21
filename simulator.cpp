@@ -1,4 +1,6 @@
-// simulator.cpp /hello
+// simulator.cpp
+// Partners: Austin Wilson, Samuel Johnston, Theodore Rice
+
 #include "simulator.h"
 
 // ============================================================================
@@ -156,7 +158,7 @@ int IOSim::append(std::string i, int t) {
 std::vector<std::string> IOSim::cycle() {
 	std::vector<std::string> finished;
 	std::vector<struct IDTime> unfinished;
-	
+
 	unsigned int i = 0;
 	for (; i < procs.size(); i++) {
 		procs[i].time--;
@@ -172,7 +174,7 @@ std::vector<std::string> IOSim::cycle() {
 }
 
 void IOSim::pprint() {
-	unsigned int i = 0; 
+	unsigned int i = 0;
 	for (; i < procs.size(); i++) {
 		printf("%s ", procs[i].id.c_str());
 	}

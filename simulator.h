@@ -1,4 +1,6 @@
 // simulator.h
+// Partners: Austin Wilson, Samuel Johnston, Theodore Rice
+
 #pragma once
 #include <string>
 #include <vector>
@@ -124,4 +126,3 @@ public:
 	void setTimeRemaining(std::string, int); //set remaining time on current burst
 	void pprint();
 };
-

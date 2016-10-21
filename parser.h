@@ -1,4 +1,5 @@
 // parser.h
+// Partners: Austin Wilson, Samuel Johnston, Theodore Rice
 
 #pragma once
 #include <string.h> //for c string functions

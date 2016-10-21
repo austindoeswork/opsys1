@@ -1,4 +1,6 @@
 // parser.cpp
+// Partners: Austin Wilson, Samuel Johnston, Theodore Rice
+
 #include "parser.h"
 
 #define MAXSTRING 2048 //max length of a string
@@ -51,7 +53,7 @@ std::vector<class Process *> Parse(char const *filename){
 
         //READ LINE WORD BY WORD INTO valArray
         char *word_p = strtok(lineBuffer, "|"); //tokenize the line
-        
+
     	std::vector<char *> tokenVec;
 
         for(; word_p != NULL; word_p = strtok(NULL, "|")){
@@ -64,7 +66,7 @@ std::vector<class Process *> Parse(char const *filename){
 			Process * proc = new Process(tokenVec[0],atoi(tokenVec[1]),atoi(tokenVec[2]),atoi(tokenVec[3]),atoi(tokenVec[4]));
 			procVec.push_back(proc);
 	    }
-	    
+
 	    unsigned int i = 0;
 	    for (; i < tokenVec.size(); i++){
 	    	free(tokenVec[i]);
